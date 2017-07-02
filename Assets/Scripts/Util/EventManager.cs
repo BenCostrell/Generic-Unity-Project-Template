@@ -4,6 +4,19 @@ using UnityEngine;
 
 public abstract class Event {}
 
+// EVENTS
+public class ButtonPressed : Event {
+    public string button;
+    public int playerNum;
+    public ButtonPressed(string _button, int _playerNum)
+    {
+        button = _button;
+        playerNum = _playerNum;
+    }
+}
+
+public class Reset : Event { }
+
 public class EventManager {
 
 	public delegate void EventDelegate<T>(T e) where T: Event;

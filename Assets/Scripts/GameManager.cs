@@ -5,7 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
-    public Player[] players;
+    public GameObject sceneRoot;
+
+    public int numPlayers;
+    [HideInInspector]
+    public List<Player> players;
     public Vector3[] playerSpawns;
 
 	void Awake()
@@ -16,14 +20,14 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
 	void Start () {
         InitializePlayers();
-	}
+        Services.EventManager.Register<Reset>(Reset);
+        Services.SceneStackManager.PushScene<TitleScreen>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetButtonDown("Reset"))
-        {
-            Reset();
-        }
+        Services.InputManager.GetInput();
+        Services.TaskManager.Update();
 	}
 
     void InitializeServices()
@@ -32,15 +36,14 @@ public class GameManager : MonoBehaviour {
         Services.EventManager = new EventManager();
         Services.TaskManager = new TaskManager();
         Services.Prefabs = Resources.Load<PrefabDB>("Prefabs/Prefabs");
+        Services.SceneStackManager = new SceneStackManager<TransitionData>(sceneRoot, Services.Prefabs.Scenes);
+        Services.InputManager = new InputManager();
     }
 
     void InitializePlayers()
     {
-        players = new Player[2]
-        {
-            InitializePlayer(1),
-            InitializePlayer(2)
-        };
+        players = new List<Player>();
+        for (int i = 0; i < numPlayers; i++) players.Add(InitializePlayer(i + 1));
     }
 
     Player InitializePlayer(int playerNum)
@@ -51,7 +54,7 @@ public class GameManager : MonoBehaviour {
         return player;
     }
 
-    void Reset()
+    void Reset(Reset e)
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }

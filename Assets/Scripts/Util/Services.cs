@@ -7,4 +7,6 @@ public static class Services {
     public static EventManager EventManager { get; set; }
 	public static TaskManager TaskManager { get; set; }
     public static PrefabDB Prefabs { get; set; }
+    public static SceneStackManager<TransitionData> SceneStackManager { get; set; }
+    public static InputManager InputManager { get; set; }
 }

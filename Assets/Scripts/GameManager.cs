@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour {
         InitializePlayers();
         Services.EventManager.Register<Reset>(Reset);
         Services.SceneStackManager.PushScene<TitleScreen>();
+        //Services.TaskManager.AddTask(TestBranch(1));
     }
 	
 	// Update is called once per frame
@@ -58,4 +59,33 @@ public class GameManager : MonoBehaviour {
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
+    //TaskTree TestBranch(int branchNum)
+    //{
+    //    TaskTree testBranch = new TaskTree(
+    //        new DebugTask("starting test branch " + branchNum),
+    //        new TaskTree(new DebugTask("immediate test branch " + branchNum + " child 1")),
+    //        new TaskTree(new DebugTask("immediate test branch " + branchNum + " child 2")),
+    //        new TaskTree(new DebugTask("immediate test branch " + branchNum + " child 3"), 
+    //            new TaskTree(new WaitTask(1f), 
+    //                new TaskTree(new DebugTask("delayed test branch " + branchNum  + " child 3 subchild"))))
+    //        );
+    //    return testBranch;
+    //}
 }
+
+//public class DebugTask : Task
+//{
+//    public string debugMessage;
+
+//    public DebugTask(string _debugMessage)
+//    {
+//        debugMessage = _debugMessage;
+//    }
+
+//    protected override void Init()
+//    {
+//        Debug.Log(debugMessage + " at time " + Time.time);
+//        SetStatus(TaskStatus.Success);
+//    }
+//}

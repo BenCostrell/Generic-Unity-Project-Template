@@ -12,6 +12,14 @@ public class TaskManager {
 		task.SetStatus (Task.TaskStatus.Pending);
 	}
 
+    public void AddTask(TaskTree taskTree)
+    {
+        Debug.Assert(taskTree.root != null);
+        Debug.Assert(!taskTree.root.IsAttached);
+        tasks.Add(taskTree.DistributedTree());
+        taskTree.root.SetStatus(Task.TaskStatus.Pending);
+    }
+
 	public void Update(){
 		Task task;
 		for (int i = tasks.Count - 1; i >= 0; i--) {
@@ -33,8 +41,8 @@ public class TaskManager {
 	}
 
 	private void HandleCompletion(Task task, int taskIndex){
-		if ((task.nextTask != null) && task.IsSuccessful) {
-			AddTask (task.nextTask);
+		if ((task.nextTasks != null) && task.IsSuccessful) {
+            foreach (Task nextTask in task.nextTasks) AddTask(nextTask);
 		}
 
 		tasks.RemoveAt (taskIndex);

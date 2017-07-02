@@ -116,11 +116,54 @@ public class Task {
 
 	protected virtual void CleanUp() {}
 
-	public Task nextTask{ get; private set; }
+	public List<Task> nextTasks{ get; private set; }
 
-	public Task Then(Task task){
-		Debug.Assert (!task.IsAttached);
-		nextTask = task;
-		return task;
+	public void Then(params Task[] tasks)
+    {
+        nextTasks = new List<Task>();
+        foreach (Task task in tasks)
+        {
+            Debug.Assert(!task.IsAttached);
+            nextTasks.Add(task);
+        }
 	}
+
+    public void Then(List<Task> tasks)
+    {
+        nextTasks = new List<Task>();
+        foreach (Task task in tasks)
+        {
+            Debug.Assert(!task.IsAttached);
+            nextTasks.Add(task);
+        }
+    }
+
+    public void Then(TaskTree taskTree)
+    {
+        Debug.Assert(!taskTree.root.IsAttached);
+        nextTasks = new List<Task>(){ taskTree.DistributedTree() };
+    }
 }
+
+public class TaskTree
+{
+    public Task root;
+    public List<TaskTree> children;
+
+    public TaskTree(Task _root, params TaskTree[] _children)
+    {
+        root = _root;
+        children = new List<TaskTree>();
+        foreach (TaskTree child in _children) children.Add(child);
+    }
+
+    public Task DistributedTree()
+    {
+        List<Task> childrenDistributed = new List<Task>();
+        if (children.Count > 0) foreach (TaskTree child in children) childrenDistributed.Add(child.DistributedTree());
+        root.Then(childrenDistributed);
+        return root;
+    }
+}
+
+
